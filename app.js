@@ -57,12 +57,11 @@ var displayItems  = function() {
                     }
                 }
             ]).then(function (answer){
-                //check if quantity is available
-                console.log(chosenItem);
-                if (parseInt(answer.quantity) < chosenItem.quantity ) {
+                //If item is in stock for chosen quantity: 
+                if (parseInt(answer.quantity) <= chosenItem.quantity ) {
                     console.log("The product is in stock!");
                     var newQuantity = parseInt(chosenItem.quantity) - parseInt(answer.quantity);
-                    //UPDATE IN DB
+                    //Update the remaining stock in the db
                     var query = connection.query(
                         "UPDATE products SET ? WHERE ?", [
                             {
@@ -74,26 +73,21 @@ var displayItems  = function() {
                                 id: chosenItem.id
                             }
                         ]
-                    )
+                    );
+                    //Show customer total price
+                    var totalDue = parseInt(chosenItem.price)*parseInt(answer.quantity);
+                    console.log(`Your total amount due is $ ${totalDue}`);
 
                 } else {
                     console.log('sorry the item is out of stock :( ');
                 }
+                connection.end();
             })
         })
-        connection.end();
+        
     });
-    //whatToBuy(res);
+    
 }
 
-//   function whatToBuy(res) {
-//     inquirer.prompt([
-//         {
-//             name: 'choice',
-//             message: 'What item would you like to buy today?',
-//             type: 'list',
-//             choices: 
-//         }
-//     ])
-//   };
+
 displayItems();
