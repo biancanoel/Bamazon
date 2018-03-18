@@ -38,7 +38,6 @@ var command = function () {
             case "Add to Inventory":
                 console.log("Add to Inventory");
                 lowInventory(addInventory, itemsLowStock, fullArray);
-                
                 break;
 
             case "Add New Product":
@@ -97,7 +96,7 @@ function addInventory(itemsLowStock) {
         },
         {
             name: 'quantity',
-            message: 'What is the NEW total quantity of the product?',
+            message: 'What quantity would you like to add?',
             type: 'input',
             validate: function (value) {
                 if (isNaN(value) === false) {
@@ -108,19 +107,17 @@ function addInventory(itemsLowStock) {
             }
         },
     ]).then(function(answer){
-        console.log("test");
         for (i=0; i<fullArray.length; i++) {
             if (fullArray[i].productName === answer.product) {
             var chosenItem = fullArray[i];
+            console.log(chosenItem.id);
             }
         };
-        connection.query("UPDATE products SET ? WHERE ? ", 
-        [{
-            quantity: answer.quantity
-        },
+        connection.query("UPDATE products SET quantity = quantity + "+answer.quantity+ " WHERE ? ", 
+        
         { 
             id: chosenItem.id
-        }], 
+        }, 
 
         function (err,res) {
             if (err) throw err;
