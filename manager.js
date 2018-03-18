@@ -2,7 +2,8 @@ var mysql = require('mysql');
 var inquirer = require('inquirer');
 
 var itemsLowStock = [];
-//create a connection to mysql database
+var fullArray =[];
+
 var connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -31,12 +32,13 @@ var command = function () {
 
             case "View Low Inventory":
                 console.log("View Low Inventory")
-                lowInventory();
+                lowInventory(addInventory, itemsLowStock, fullArray);
                 break;
 
             case "Add to Inventory":
                 console.log("Add to Inventory");
-                lowInventory(itemsLowStock, addInventory());
+                lowInventory(addInventory, itemsLowStock, fullArray);
+                
                 break;
 
             case "Add New Product":
@@ -59,14 +61,14 @@ function viewProducts() {
             console.log("FOR SALE:")
             console.log(`ItemID:${res[index].id}, Description: ${res[index].productName},  Price: ${res[index].price}`);
             availableProducts.push(res[index].productName)
-
-        });
-        connection.end();
-    }); command();
+        }); 
+    }); connection.end(); 
+    console.log("disconnected");
+    command();
 }
 
 
-function lowInventory() {
+function lowInventory(callback) {
     //search query for all only products with inventory less than 5
     connection.query("SELECT * from products where quantity BETWEEN 0 and 5;", function (err, res) {
         if (err) { throw err };
@@ -76,27 +78,55 @@ function lowInventory() {
             console.log(`${res[i].productName}: only ${res[i].quantity} remaining.`)
             console.log("-----------------------");
             itemsLowStock.push(res[i].productName);
-        } return itemsLowStock;
+            fullArray.push(res[i]);
+        } 
         //console.log(itemsLowStock); 
+        callback(itemsLowStock, fullArray);
+        
     });
 
 };
 
 function addInventory(itemsLowStock) {
-    console.log(itemsLowStock);
     inquirer.prompt([
         {
-            name: 'restock',
+            name: 'product',
             message: 'Item would you like to restock?',
             type: 'list',
             choices: itemsLowStock
-        }
-    ])
+        },
+        {
+            name: 'quantity',
+            message: 'What is the NEW total quantity of the product?',
+            type: 'input',
+            validate: function (value) {
+                if (isNaN(value) === false) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        },
+    ]).then(function(answer){
+        console.log("test");
+        for (i=0; i<fullArray.length; i++) {
+            if (fullArray[i].productName === answer.product) {
+            var chosenItem = fullArray[i];
+            }
+        };
+        connection.query("UPDATE products SET ? WHERE ? ", 
+        [{
+            quantity: answer.quantity
+        },
+        { 
+            id: chosenItem.id
+        }], 
 
-    //console.log(itemsLowStock);
-    //increase products.quantity for selected item
-
-
+        function (err,res) {
+            if (err) throw err;
+            console.log("The inventory has been updated!");
+        })
+    });
 }
 
 

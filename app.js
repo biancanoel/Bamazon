@@ -92,4 +92,3 @@ var displayItems  = function() {
 
 displayItems();
 
-module.exports()
