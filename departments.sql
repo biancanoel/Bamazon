@@ -6,6 +6,11 @@ CREATE TABLE departments (
     over_head_costs INT NOT NULL    
 );
 
+INSERT INTO departments (department_name, over_head_costs)
+VALUES (Vegetables, 200), (Fruit, 300), (Drinks, 150);
+
+
+
 
 CREATE TABLE products (
 	item_id  INTEGER NOT NULL AUTO_INCREMENT,

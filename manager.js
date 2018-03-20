@@ -58,7 +58,7 @@ function viewProducts() {
         res.forEach((element, index) => {
             console.log("------------------");
             console.log("FOR SALE:")
-            console.log(`ItemID:${res[index].id}, Description: ${res[index].productName},  Price: ${res[index].price}`);
+            console.log(`ItemID:${res[index].item_id}, Description: ${res[index].productName},  Price: ${res[index].price}`);
             availableProducts.push(res[index].productName)
         }); 
     }); connection.end(); 
@@ -116,7 +116,7 @@ function addInventory(itemsLowStock) {
         connection.query("UPDATE products SET quantity = quantity + "+answer.quantity+ " WHERE ? ", 
         
         { 
-            id: chosenItem.id
+            item_id: chosenItem.item_id
         }, 
 
         function (err,res) {

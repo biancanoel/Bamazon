@@ -80,7 +80,7 @@ var displayItems  = function() {
                         item_id: chosenItem.item_id
                     } , function(err, res) {
                         if (err) throw err;
-                        console.log(res);
+                        //console.log(res);
                     });
 
                     //Show customer total price
