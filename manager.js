@@ -163,13 +163,26 @@ function newProduct() {
                     return false;
                 }
             }
+        },
+        {
+            name: "sales",
+            type: "input",
+            message: 'What is the initial sales of this new product?',
+            validate: function (value) {
+                if (isNaN(value) === false) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
     ]).then(function (answer) {
         connection.query("INSERT INTO products SET ?", {
             productName: answer.prodName,
             department: answer.prodDept,
             price: answer.price,
-            quantity: answer.quantity
+            quantity: answer.quantity,
+            product_sales: answer.sales
         },
             function (err, res) {
                 if (err) throw err;

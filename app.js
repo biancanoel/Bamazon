@@ -20,11 +20,11 @@ var displayItems  = function() {
         //console.log(res);
         var availableProducts = [];
         res.forEach((element, index) => {
-            console.log("------------------");
-            console.log("FOR SALE:")
-            console.log(`ItemID:${res[index].id}, Description: ${res[index].productName},  Price: ${res[index].price}`);
+            // console.log("------------------");
+            // console.log("FOR SALE:")
+            // console.log(`ItemID:${res[index].id}, Description: ${res[index].productName},  Price: ${res[index].price}`);
             availableProducts.push(res[index].productName)
-            //console.log(availableProducts);
+            //console.log("available prods: " +availableProducts);
         });
         inquirer.prompt([
             {
@@ -70,12 +70,21 @@ var displayItems  = function() {
                             },
                             {
                                 //location of item to be updated
-                                id: chosenItem.id
+                                item_id: chosenItem.item_id
+                              
                             }
                         ]
                     );
+                    console.log('item id is '+ chosenItem.item_id)
+                    var query = connection.query("UPDATE products SET product_sales = (product_sales + (price * "+answer.quantity+ ")) WHERE ? ", {
+                        item_id: chosenItem.item_id
+                    } , function(err, res) {
+                        if (err) throw err;
+                        console.log(res);
+                    });
+
                     //Show customer total price
-                    var totalDue = parseInt(chosenItem.price)*parseInt(answer.quantity);
+                    var totalDue = parseFloat(chosenItem.price)*parseFloat(answer.quantity);
                     console.log(`Your total amount due is $ ${totalDue}`);
 
                 } else {
